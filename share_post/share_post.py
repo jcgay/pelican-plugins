@@ -30,6 +30,9 @@ def article_url(content):
 def article_summary(content):
     return quote(content.summary.encode('utf-8'))
 
+def user_via(content):
+    twitter_handle = content.settings['TWITTER_USERNAME']
+    return quote(twitter_handle.encode('utf-8'))
 
 def share_post(content):
     if isinstance(content, contents.Static):
@@ -37,13 +40,14 @@ def share_post(content):
     title = article_title(content)
     url = article_url(content)
     summary = article_summary(content)
+    via = user_via(content)
 
     tweet = '%s %s' % (title, url)
     facebook_link = 'http://www.facebook.com/sharer/sharer.php?s=100' \
                     '&p[url]=%s&p[images][0]=&p[title]=%s&p[summary]=%s' \
                     % (url, title, summary)
     gplus_link = 'https://plus.google.com/share?url=%s' % url
-    twitter_link = 'http://twitter.com/home?status=%s' % tweet
+    twitter_link = 'https://twitter.com/intent/tweet?url=%s&text=%s&via=%s' % (url, title, via)
     mail_link = 'mailto:?subject=%s&body=%s' % (title, url)
 
     share_links = {'twitter': twitter_link,

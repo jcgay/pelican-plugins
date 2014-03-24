@@ -26,13 +26,16 @@ def article_url(content):
     site_url = content.settings['SITEURL']
     return quote(('%s/%s' % (site_url, content.url)).encode('utf-8'))
 
-
 def article_summary(content):
     return quote(BeautifulSoup(content.summary, 'html.parser').get_text().strip().encode('utf-8'))
 
 def user_via(content):
     twitter_handle = content.settings['TWITTER_USERNAME']
     return quote(twitter_handle.encode('utf-8'))
+    
+def site_name(content):
+    sitename = content.settings['SITENAME']
+    return quote(sitename.encode('utf-8'))    
 
 def share_post(content):
     if isinstance(content, contents.Static):
@@ -41,6 +44,7 @@ def share_post(content):
     url = article_url(content)
     summary = article_summary(content)
     via = user_via(content)
+    sitename = site_name(content)
 
     tweet = ('%s%s%s' % (title, quote(' '), url)).encode('utf-8')
     diaspora_link = 'https://sharetodiaspora.github.io/?title=%s&url=%s' % (title, url)
@@ -48,13 +52,15 @@ def share_post(content):
     gplus_link = 'https://plus.google.com/share?url=%s' % url
     twitter_link = 'https://twitter.com/intent/tweet?url=%s&text=%s&via=%s' % (url, title, via)
     mail_link = 'mailto:?subject=%s&amp;body=%s' % (title, url)
+    linkedin_link = 'http://www.linkedin.com/shareArticle?mini=true&url=%s&title=%s&source=%s' % (url, title, sitename)
 
     share_links = {
                    'diaspora': diaspora_link,
                    'twitter': twitter_link,
                    'facebook': facebook_link,
                    'google-plus': gplus_link,
-                   'email': mail_link
+                   'email': mail_link,
+                   'linkedin': linkedin_link
                    }
     content.share_post = share_links
 
